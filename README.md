@@ -14,11 +14,11 @@ buzzer on critical conditions, and streams everything to a Python dashboard on y
 - Anomaly detection and stale/outlier/fault data flags
 - Smart alerts: hysteresis, cooldown, escalation, snooze, mute
 - Alerts in the browser, on Telegram and by email (weekly digest)
-- Event journal (watering, fertilizing, repotting) overlaid on charts
+- Event journal (watering, fertilizing, repotting) alongside the charts
 - 24h / 7d / 30d history from raw readings and hourly/daily rollups
 - Local OLED pages and buzzer that keep working without WiFi or the PC
 - Installable PWA dashboard (works best on `http://localhost`)
-- Demo/replay mode so the UI can run without hardware
+- Demo mode so the UI can run without hardware
 - Standard-library Python backend - no `pip install`, no build step
 
 ## Hardware
@@ -95,7 +95,7 @@ Telegram and email. Never commit it - it holds secrets. Start from
 firmware/plant_monitor/   Arduino sketch
 backend/                  stdlib HTTP server, storage, analytics, alerts
 dashboard/                vanilla HTML/CSS/JS PWA
-replay/                   sample data for demo mode
+replay/                   sample CSV for offline experiments
 docs/                     wiring, calibration, API, vision roadmap
 data/                     runtime database (gitignored)
 ```
@@ -106,7 +106,7 @@ data/                     runtime database (gitignored)
 - [x] Backend: ingest, SQLite, SSE, demo mode
 - [x] Dashboard: live cards, charts, health score
 - [x] Alerts: engine, Telegram, email
-- [x] Journal, rollups, PWA, calibration wizard
+- [x] Journal, rollups, PWA, calibration wizard, API docs
 - [ ] Vision / YOLO leaf-disease detection (deferred, see [docs/vision.md](docs/vision.md))
 
 ## License
