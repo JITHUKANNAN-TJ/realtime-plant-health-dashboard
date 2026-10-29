@@ -1,0 +1,19 @@
+{
+  "name": "Plant Health Dashboard",
+  "short_name": "Plant",
+  "description": "Realtime plant health monitoring from a home ESP32 sensor node.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0b120f",
+  "theme_color": "#0d1512",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

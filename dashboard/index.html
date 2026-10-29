@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d1512">
+  <title>Plant Health Dashboard</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="leaf" aria-hidden="true">&#127793;</span>
+      <div>
+        <h1 id="plant-name">Plant</h1>
+        <p id="device-id" class="muted">plant-01</p>
+      </div>
+    </div>
+    <div class="status">
+      <span id="conn-dot" class="dot offline"></span>
+      <span id="conn-text">connecting</span>
+      <span id="last-update" class="muted"></span>
+    </div>
+    <div class="actions">
+      <button id="btn-notify" class="ghost" type="button">Enable notifications</button>
+      <button id="btn-settings" class="ghost" type="button">Settings</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="card health-card">
+        <div class="ring">
+          <canvas id="health-ring" width="150" height="150"></canvas>
+          <div class="ring-label">
+            <span id="health-score">--</span>
+            <small>health</small>
+          </div>
+        </div>
+        <div class="health-info">
+          <h2>Plant health</h2>
+          <p id="top-issue">Waiting for data...</p>
+          <div id="penalties" class="penalties"></div>
+        </div>
+      </div>
+
+      <div class="card forecast-card">
+        <h3>Watering forecast</h3>
+        <p id="forecast-msg">Collecting data...</p>
+        <div class="chips">
+          <span id="weather-chip" class="chip">weather --</span>
+          <span id="signal-chip" class="chip">WiFi --</span>
+          <span id="quality-chip" class="chip">quality --</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="cards" id="cards"></section>
+
+    <section class="card panel">
+      <div class="panel-head">
+        <h2>Alerts</h2>
+        <div class="row">
+          <button id="btn-snooze" type="button">Snooze 60m</button>
+          <button id="btn-mute" type="button">Mute buzzer</button>
+        </div>
+      </div>
+      <ul id="alert-list" class="list">
+        <li class="muted">No active alerts.</li>
+      </ul>
+    </section>
+
+    <section class="card panel">
+      <div class="panel-head">
+        <h2>History</h2>
+        <div class="tabs" id="range-tabs">
+          <button data-range="24h" class="active" type="button">24h</button>
+          <button data-range="7d" type="button">7d</button>
+          <button data-range="30d" type="button">30d</button>
+        </div>
+      </div>
+      <div class="chart-toggles" id="chart-toggles"></div>
+      <div class="chart-wrap">
+        <canvas id="history-chart"></canvas>
+      </div>
+    </section>
+
+    <section class="two-col">
+      <div class="card panel">
+        <div class="panel-head"><h2>Journal</h2></div>
+        <form id="event-form" class="event-form">
+          <select name="type">
+            <option value="watering">Watering</option>
+            <option value="fertilize">Fertilize</option>
+            <option value="repot">Repot</option>
+            <option value="prune">Prune</option>
+            <option value="move">Moved</option>
+            <option value="note">Note</option>
+          </select>
+          <input name="note" placeholder="note" maxlength="200">
+          <input name="amount" type="number" step="0.1" placeholder="amount">
+          <button type="submit">Log</button>
+        </form>
+        <ul id="event-list" class="list"></ul>
+      </div>
+
+      <div class="card panel">
+        <div class="panel-head"><h2>Data</h2></div>
+        <ul class="list">
+          <li><a href="/api/export.csv">Download readings (CSV)</a></li>
+          <li><a href="/api/report/weekly" target="_blank" rel="noopener">Open weekly report</a></li>
+          <li><a href="/api/forecast" target="_blank" rel="noopener">Weather forecast (JSON)</a></li>
+        </ul>
+        <p class="small">Anomalies: <span id="anomaly-text">none</span></p>
+        <p class="small" id="link-note"></p>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="settings-dialog">
+    <form method="dialog" id="settings-form">
+      <div class="panel-head">
+        <h2>Settings</h2>
+        <button id="btn-close-settings" class="close" type="button">Close</button>
+      </div>
+
+      <fieldset>
+        <legend>Device</legend>
+        <label>Name <input name="name" id="set-name"></label>
+        <label class="check"><input type="checkbox" name="outdoor" id="set-outdoor"> Outdoor plant</label>
+        <label>Soil refill threshold (%)
+          <input name="refill" id="set-refill" type="number" min="0" max="100" step="1">
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Calibration (millivolts)</legend>
+        <label>LDR dark mV <input id="cal-dark" type="number" step="1"></label>
+        <label>LDR bright mV <input id="cal-bright" type="number" step="1"></label>
+        <label>Soil dry mV <input id="cal-dry" type="number" step="1"></label>
+        <label>Soil wet mV <input id="cal-wet" type="number" step="1"></label>
+        <p class="small">Cover the LDR for dark; expose to light for bright. Soil: dry air vs a cup of water.</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Notifications</legend>
+        <div class="row">
+          <button type="button" id="btn-telegram-test">Test Telegram</button>
+          <button type="button" id="btn-email-test">Test email</button>
+        </div>
+        <p class="small">Configure Telegram/email secrets in <code>backend/config.json</code>.</p>
+      </fieldset>
+
+      <div class="row">
+        <button type="submit" id="btn-save-settings" class="primary">Save settings</button>
+      </div>
+      <p id="settings-status" class="small"></p>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status"></div>
+
+  <script src="/charts.js" defer></script>
+  <script src="/app.js" defer></script>
+</body>
+</html>
