@@ -1,0 +1,26 @@
+# Secrets & local config
+backend/config.json
+.env
+*.key
+*.pem
+
+# Runtime data
+data/
+*.db
+*.db-wal
+*.db-shm
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Editors / OS
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+desktop.ini
