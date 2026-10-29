@@ -1,5 +1,6 @@
 # Secrets & local config
 backend/config.json
+firmware/plant_monitor/config.h
 .env
 *.key
 *.pem
